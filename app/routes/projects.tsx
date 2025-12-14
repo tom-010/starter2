@@ -4,6 +4,12 @@ import { Plus, Folder } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { ProjectsTable } from "~/components/projects-table";
 import type { Project } from "~/db/schema";
+import { requireAuth } from "~/lib/require-auth";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireAuth(request);
+  return null;
+}
 
 export function meta({}: Route.MetaArgs) {
   return [

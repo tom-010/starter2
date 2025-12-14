@@ -1,4 +1,4 @@
-import type { Route } from "./+types/analytics";
+// import type { Route } from "./+types/analytics";
 import { useEffect, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import type { Project } from "~/db/schema";
@@ -10,7 +10,7 @@ interface AnalyticsData {
   projectsWithTodos: number;
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Analytics" },
     { name: "description", content: "View project analytics" },

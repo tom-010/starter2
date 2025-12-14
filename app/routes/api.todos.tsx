@@ -2,8 +2,11 @@ import { db } from '~/db/client';
 import { todos } from '~/db/schema';
 import { eq } from 'drizzle-orm';
 import type { Route } from './+types/api.todos';
+import { requireAuth } from '~/lib/require-auth';
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
+  await requireAuth(request);
+
   if (request.method !== 'GET') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   }
@@ -30,6 +33,8 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 };
 
 export const action = async ({ request }: Route.ActionArgs) => {
+  await requireAuth(request);
+
   try {
     if (request.method === 'POST') {
       const formData = await request.json();

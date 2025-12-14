@@ -5,6 +5,12 @@ import { Plus, ArrowLeft } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { TodosTable } from "~/components/todos-table";
 import type { Project, Todo } from "~/db/schema";
+import { requireAuth } from "~/lib/require-auth";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  await requireAuth(request);
+  return null;
+}
 
 export function meta({ params }: Route.MetaArgs) {
   return [
