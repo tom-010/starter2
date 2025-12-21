@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Form } from "react-router"
+import { Form, Link } from "react-router"
 import { Check, Trash2 } from "lucide-react"
 import {
   Table,
@@ -22,7 +22,6 @@ import {
 } from "~/components/ui/pagination"
 import { Button } from "~/components/ui/button"
 import type { Todo } from "@prisma/client"
-import { routes } from "~/lib/routes"
 
 interface TodosTableProps {
   todos: Todo[]
@@ -163,13 +162,9 @@ export function TodosTable({ todos }: TodosTableProps) {
                   }`}
                 >
                   <TableCell>
-                    <Form
-                      method="put"
-                      action={routes.updateTodo.path}
-                      style={{ display: "inline" }}
-                    >
+                    <Form method="post" style={{ display: "inline" }}>
+                      <input type="hidden" name="intent" value="updateTodo" />
                       <input type="hidden" name="id" value={todo.id} />
-                      <input type="hidden" name="projectId" value={todo.projectId} />
                       <input type="hidden" name="completed" value={String(!todo.completed)} />
                       <button
                         type="submit"
@@ -184,29 +179,26 @@ export function TodosTable({ todos }: TodosTableProps) {
                     </Form>
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={
+                    <Link
+                      to={`/todos/${todo.id}`}
+                      className={`hover:underline ${
                         todo.completed
                           ? "text-muted-foreground line-through"
                           : todo.priority === "low"
                           ? "text-muted-foreground"
                           : "font-medium"
-                      }
+                      }`}
                     >
                       {todo.title}
-                    </span>
+                    </Link>
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {todo.description || "-"}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <Form
-                      method="put"
-                      action={routes.updateTodo.path}
-                      style={{ display: "inline" }}
-                    >
+                    <Form method="post" style={{ display: "inline" }}>
+                      <input type="hidden" name="intent" value="updateTodo" />
                       <input type="hidden" name="id" value={todo.id} />
-                      <input type="hidden" name="projectId" value={todo.projectId} />
                       <input
                         type="hidden"
                         name="priority"
@@ -233,8 +225,7 @@ export function TodosTable({ todos }: TodosTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <Form
-                      method="delete"
-                      action={routes.deleteTodo.path}
+                      method="post"
                       onSubmit={(e) => {
                         if (!window.confirm("Are you sure you want to delete this todo?")) {
                           e.preventDefault()
@@ -242,8 +233,8 @@ export function TodosTable({ todos }: TodosTableProps) {
                       }}
                       style={{ display: "inline" }}
                     >
+                      <input type="hidden" name="intent" value="deleteTodo" />
                       <input type="hidden" name="id" value={todo.id} />
-                      <input type="hidden" name="projectId" value={todo.projectId} />
                       <Button
                         type="submit"
                         variant="ghost"

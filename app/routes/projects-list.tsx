@@ -1,11 +1,10 @@
 import type { Route } from "./+types/_index";
 import type { RouteHandle } from "~/components/page-header";
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import { Plus, Folder } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { ProjectsTable } from "~/components/projects-table";
 import { db } from "~/db/client";
-import { routes } from "~/lib/routes";
 
 export const handle: RouteHandle = {
   breadcrumb: { label: "Projects", href: "/" },
@@ -14,6 +13,32 @@ export const handle: RouteHandle = {
 export async function loader() {
   const projects = await db.project.findMany();
   return { projects };
+}
+
+export async function action({ request }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  switch (intent) {
+    case "deleteProject": {
+      const id = parseInt(formData.get("id") as string);
+      await db.project.delete({ where: { id } });
+      return redirect("/");
+    }
+
+    default: {
+      // Default: create project
+      const name = formData.get("name") as string;
+      const color = (formData.get("color") as string) || "blue";
+      const description = formData.get("description") as string | undefined;
+
+      const project = await db.project.create({
+        data: { name, color, description },
+      });
+
+      return redirect(`/projects/${project.id}`);
+    }
+  }
 }
 
 export function meta() {
@@ -32,7 +57,7 @@ export default function ProjectsPage({ loaderData }: Route.ComponentProps) {
           <p className="text-muted-foreground">Organize your todos into projects</p>
         </div>
 
-        <Form method="post" action={routes.createProject.path} className="mb-8">
+        <Form method="post" className="mb-8">
           <div className="flex gap-2">
             <input
               type="text"

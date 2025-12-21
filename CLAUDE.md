@@ -22,7 +22,7 @@
   </map>
 
   <pattern name="Data Mutation (Strict)">
-    - **No API Routes:** `routes/api/*.ts` are FORBIDDEN.
+    - **No API Routes:** `routes/api/*.ts` are normally not desired FORBIDDEN.
     - **Actions:** Logic lives in `export async function action` co-located with the UI.
     - **Validation:** Validate `request.formData()` with Zod immediately.
     - **Feedback:** Return `data` or `errors` directly to the component.
@@ -44,7 +44,6 @@
 
   <negative_constraints>
     - DO NOT create resource routes (API endpoints).
-    - DO NOT use `drizzle` or `drizzle-kit` (Legacy).
     - DO NOT write tests unless explicitly asked.
     - DO NOT abstract code until it is used 3 times (WET over DRY).
   </negative_constraints>

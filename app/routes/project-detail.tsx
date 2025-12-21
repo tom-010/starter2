@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/projects.$id";
 import type { RouteHandle, BreadcrumbItem } from "~/components/page-header";
-import { Form } from "react-router";
+import { Form, redirect } from "react-router";
 import { Plus, Pencil } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { TodosTable } from "~/components/todos-table";
 import { db } from "~/db/client";
-import { routes } from "~/lib/routes";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -34,10 +33,70 @@ export async function loader({ params }: Route.LoaderArgs) {
 
   const projectTodos = await db.todo.findMany({
     where: { projectId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
   });
 
   return { project, todos: projectTodos };
+}
+
+export async function action({ request, params }: Route.ActionArgs) {
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+  const projectId = parseInt(params.id!);
+
+  switch (intent) {
+    case "updateProject": {
+      const name = formData.get("name") as string;
+      const description = formData.get("description") as string | undefined;
+      await db.project.update({
+        where: { id: projectId },
+        data: { name, description },
+      });
+      return redirect(`/projects/${projectId}`);
+    }
+
+    case "deleteProject": {
+      await db.project.delete({ where: { id: projectId } });
+      return redirect("/");
+    }
+
+    case "createTodo": {
+      const title = formData.get("title") as string;
+      const priority = (formData.get("priority") as string) || "medium";
+      await db.todo.create({
+        data: {
+          projectId,
+          title,
+          priority,
+          completed: false,
+        },
+      });
+      return redirect(`/projects/${projectId}`);
+    }
+
+    case "updateTodo": {
+      const id = parseInt(formData.get("id") as string);
+      const completed = formData.get("completed");
+      const priority = formData.get("priority");
+      await db.todo.update({
+        where: { id },
+        data: {
+          ...(completed !== null && { completed: completed === "true" }),
+          ...(priority && { priority: priority as string }),
+        },
+      });
+      return redirect(`/projects/${projectId}`);
+    }
+
+    case "deleteTodo": {
+      const id = parseInt(formData.get("id") as string);
+      await db.todo.delete({ where: { id } });
+      return redirect(`/projects/${projectId}`);
+    }
+
+    default:
+      throw new Response("Invalid intent", { status: 400 });
+  }
 }
 
 export function meta() {
@@ -64,12 +123,11 @@ export default function ProjectDetailPage({
       <div className="max-w-6xl mx-auto">
         {editing ? (
           <Form
-            method="put"
-            action={routes.updateProject.path}
+            method="post"
             className="mb-8"
             onSubmit={() => setEditing(false)}
           >
-            <input type="hidden" name="id" value={project.id} />
+            <input type="hidden" name="intent" value="updateProject" />
             <div className="space-y-3">
               <input
                 type="text"
@@ -111,7 +169,8 @@ export default function ProjectDetailPage({
           </div>
         )}
 
-        <Form method="post" action={routes.createTodo.path} className="mb-8">
+        <Form method="post" className="mb-8">
+          <input type="hidden" name="intent" value="createTodo" />
           <div className="flex gap-2">
             <input
               ref={inputRef}
@@ -122,7 +181,6 @@ export default function ProjectDetailPage({
               className="flex-1 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
               required
             />
-            <input type="hidden" name="projectId" value={project.id} />
             <input type="hidden" name="priority" value="medium" />
             <Button type="submit">
               <Plus className="h-4 w-4 mr-2" />

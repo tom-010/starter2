@@ -22,7 +22,6 @@ import {
 } from "~/components/ui/pagination"
 import { Button } from "~/components/ui/button"
 import type { Project } from "@prisma/client"
-import { routes } from "~/lib/routes"
 
 interface ProjectsTableProps {
   projects: Project[]
@@ -161,7 +160,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                   </TableCell>
                   <TableCell>
                     <Link
-                      to={routes.projectDetail(project.id)}
+                      to={`/projects/${project.id}`}
                       className="hover:underline font-medium"
                     >
                       {project.name}
@@ -175,14 +174,14 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                   </TableCell>
                   <TableCell className="text-right">
                     <Form
-                      method="delete"
-                      action={routes.deleteProject.path}
+                      method="post"
                       onSubmit={(e) => {
                         if (!window.confirm("Are you sure you want to delete this project?")) {
                           e.preventDefault()
                         }
                       }}
                     >
+                      <input type="hidden" name="intent" value="deleteProject" />
                       <input type="hidden" name="id" value={project.id} />
                       <Button
                         type="submit"

@@ -1,3 +1,4 @@
+import { Fragment } from "react"
 import { Link, useMatches } from "react-router"
 import { SidebarTrigger } from "~/components/ui/sidebar"
 import { Separator } from "~/components/ui/separator"
@@ -53,16 +54,18 @@ export function PageHeader() {
             {breadcrumbs.map((crumb, index) => {
               const isLast = index === breadcrumbs.length - 1
               return (
-                <BreadcrumbItem key={index}>
+                <Fragment key={index}>
                   {index > 0 && <BreadcrumbSeparator />}
-                  {isLast || !crumb.href ? (
-                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink asChild>
-                      <Link to={crumb.href}>{crumb.label}</Link>
-                    </BreadcrumbLink>
-                  )}
-                </BreadcrumbItem>
+                  <BreadcrumbItem>
+                    {isLast || !crumb.href ? (
+                      <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink asChild>
+                        <Link to={crumb.href}>{crumb.label}</Link>
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
               )
             })}
           </BreadcrumbList>
