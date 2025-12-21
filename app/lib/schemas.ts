@@ -28,6 +28,7 @@ export type CreateTodoInput = z.infer<typeof CreateTodoSchema>;
 
 export const UpdateTodoSchema = z.object({
   id: z.coerce.number(),
+  projectId: z.coerce.number(),
   title: z.string().min(1, "Todo title is required").optional(),
   description: z.string().optional(),
   completed: z.coerce.boolean().optional(),

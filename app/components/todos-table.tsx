@@ -40,17 +40,6 @@ export function TodosTable({ todos }: TodosTableProps) {
     startIndex + ITEMS_PER_PAGE
   )
 
-  const priorityColors: Record<string, string> = {
-    low: "bg-blue-50 text-blue-700 border-blue-200",
-    medium: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    high: "bg-red-50 text-red-700 border-red-200",
-  }
-
-  const priorityBadges: Record<string, string> = {
-    low: "bg-blue-100 text-blue-800",
-    medium: "bg-yellow-100 text-yellow-800",
-    high: "bg-red-100 text-red-800",
-  }
 
   const handlePrevious = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -149,7 +138,7 @@ export function TodosTable({ todos }: TodosTableProps) {
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50">
+            <TableRow>
               <TableHead className="w-12"></TableHead>
               <TableHead>Title</TableHead>
               <TableHead className="hidden md:table-cell">Description</TableHead>
@@ -161,7 +150,7 @@ export function TodosTable({ todos }: TodosTableProps) {
           <TableBody>
             {paginatedTodos.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   No todos found
                 </TableCell>
               </TableRow>
@@ -169,9 +158,7 @@ export function TodosTable({ todos }: TodosTableProps) {
               paginatedTodos.map((todo) => (
                 <TableRow
                   key={todo.id}
-                  className={`hover:bg-gray-50 transition-colors ${
-                    todo.completed ? "opacity-60" : ""
-                  }`}
+                  className={todo.completed ? "opacity-60" : ""}
                 >
                   <TableCell>
                     <Form
@@ -184,42 +171,34 @@ export function TodosTable({ todos }: TodosTableProps) {
                       <input type="hidden" name="completed" value={String(!todo.completed)} />
                       <button
                         type="submit"
-                        className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                        className={`flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center ${
                           todo.completed
-                            ? "bg-green-500 border-green-500"
-                            : "border-gray-300 hover:border-green-500"
+                            ? "bg-primary border-primary"
+                            : "border-input hover:border-primary"
                         }`}
                       >
-                        {todo.completed && <Check size={14} className="text-white" />}
+                        {todo.completed && <Check size={14} className="text-primary-foreground" />}
                       </button>
                     </Form>
                   </TableCell>
                   <TableCell>
                     <span
                       className={`font-medium ${
-                        todo.completed
-                          ? "text-gray-400 line-through"
-                          : "text-gray-800"
+                        todo.completed ? "text-muted-foreground line-through" : ""
                       }`}
                     >
                       {todo.title}
                     </span>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-gray-600">
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {todo.description || "-"}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell">
-                    <span
-                      className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                        priorityBadges[
-                          todo.priority as keyof typeof priorityBadges
-                        ] || "bg-gray-100"
-                      }`}
-                    >
+                    <span className="inline-block px-2 py-1 rounded text-xs font-medium bg-muted text-muted-foreground">
                       {todo.priority}
                     </span>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell text-sm text-gray-600">
+                  <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
                     {todo.dueDate
                       ? new Date(todo.dueDate).toLocaleDateString()
                       : "-"}
@@ -241,7 +220,6 @@ export function TodosTable({ todos }: TodosTableProps) {
                         type="submit"
                         variant="ghost"
                         size="sm"
-                        className="text-red-500 hover:bg-red-50 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -284,7 +262,7 @@ export function TodosTable({ todos }: TodosTableProps) {
         </div>
       )}
 
-      <div className="text-sm text-gray-600 text-center">
+      <div className="text-sm text-muted-foreground text-center">
         Showing {Math.min(startIndex + 1, todos.length)} to{" "}
         {Math.min(startIndex + ITEMS_PER_PAGE, todos.length)} of{" "}
         {todos.length} todos

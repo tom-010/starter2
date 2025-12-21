@@ -67,64 +67,64 @@ export default function AnalyticsPage() {
     <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Analytics</h1>
-          <p className="text-gray-600">Overview of your projects and todos</p>
+          <h1 className="text-3xl font-bold mb-2">Analytics</h1>
+          <p className="text-muted-foreground">Overview of your projects and todos</p>
         </div>
 
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          <div className="mb-4 p-4 bg-destructive/10 border border-destructive text-destructive rounded">
             {error}
           </div>
         )}
 
         {loading ? (
-          <div className="text-center text-gray-600">Loading analytics...</div>
+          <div className="text-center text-muted-foreground">Loading analytics...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="p-6 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Total Projects
                 </h3>
-                <BarChart3 className="h-4 w-4 text-blue-500" />
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-3xl font-bold text-gray-800">
+              <p className="text-3xl font-bold">
                 {analytics.totalProjects}
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="p-6 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Total Todos
                 </h3>
-                <BarChart3 className="h-4 w-4 text-green-500" />
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-3xl font-bold text-gray-800">
+              <p className="text-3xl font-bold">
                 {analytics.totalTodos}
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="p-6 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Completed Todos
                 </h3>
-                <BarChart3 className="h-4 w-4 text-purple-500" />
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-3xl font-bold text-gray-800">
+              <p className="text-3xl font-bold">
                 {analytics.completedTodos}
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <div className="p-6 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-medium text-gray-600">
+                <h3 className="text-sm font-medium text-muted-foreground">
                   Completion Rate
                 </h3>
-                <BarChart3 className="h-4 w-4 text-orange-500" />
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-3xl font-bold text-gray-800">
+              <p className="text-3xl font-bold">
                 {completionRate}%
               </p>
             </div>

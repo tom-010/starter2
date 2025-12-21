@@ -40,21 +40,6 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
     startIndex + ITEMS_PER_PAGE
   )
 
-  const colorClasses: Record<string, string> = {
-    blue: "bg-blue-50",
-    red: "bg-red-50",
-    green: "bg-green-50",
-    purple: "bg-purple-50",
-    yellow: "bg-yellow-50",
-  }
-
-  const colorDots: Record<string, string> = {
-    blue: "bg-blue-500",
-    red: "bg-red-500",
-    green: "bg-green-500",
-    purple: "bg-purple-500",
-    yellow: "bg-yellow-500",
-  }
 
   const handlePrevious = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1))
@@ -153,7 +138,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
       <div className="rounded-lg border">
         <Table>
           <TableHeader>
-            <TableRow className="bg-gray-50">
+            <TableRow>
               <TableHead className="w-12">#</TableHead>
               <TableHead>Name</TableHead>
               <TableHead className="hidden md:table-cell">Description</TableHead>
@@ -164,38 +149,28 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
           <TableBody>
             {paginatedProjects.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                   No projects found
                 </TableCell>
               </TableRow>
             ) : (
               paginatedProjects.map((project, idx) => (
-                <TableRow
-                  key={project.id}
-                  className={`hover:bg-gray-50 transition-colors ${
-                    colorClasses[project.color as keyof typeof colorClasses]
-                  }`}
-                >
-                  <TableCell className="font-medium text-gray-600">
+                <TableRow key={project.id}>
+                  <TableCell className="font-medium text-muted-foreground">
                     {startIndex + idx + 1}
                   </TableCell>
                   <TableCell>
                     <Link
                       to={routes.projectDetail(project.id)}
-                      className="flex items-center gap-2 hover:underline font-medium"
+                      className="hover:underline font-medium"
                     >
-                      <span
-                        className={`inline-block w-3 h-3 rounded-full ${
-                          colorDots[project.color as keyof typeof colorDots]
-                        }`}
-                      />
                       {project.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-gray-600">
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {project.description || "-"}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-gray-500">
+                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
                     {new Date(project.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
@@ -213,7 +188,6 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                         type="submit"
                         variant="ghost"
                         size="sm"
-                        className="text-red-500 hover:bg-red-50 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -256,7 +230,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
         </div>
       )}
 
-      <div className="text-sm text-gray-600 text-center">
+      <div className="text-sm text-muted-foreground text-center">
         Showing {Math.min(startIndex + 1, projects.length)} to{" "}
         {Math.min(startIndex + ITEMS_PER_PAGE, projects.length)} of{" "}
         {projects.length} projects

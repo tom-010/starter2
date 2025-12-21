@@ -44,13 +44,6 @@ export default function ProjectDetailPage({
 }: Route.ComponentProps) {
   const project = loaderData.project;
 
-  const colorClasses: Record<string, string> = {
-    blue: "bg-blue-100",
-    red: "bg-red-100",
-    green: "bg-green-100",
-    purple: "bg-purple-100",
-    yellow: "bg-yellow-100",
-  };
 
   const [form, fields] = useForm({
     constraint: getZodConstraint(CreateTodoSchema),
@@ -70,17 +63,10 @@ export default function ProjectDetailPage({
           </Button>
         </Link>
 
-        <div
-          className={`rounded-lg p-6 mb-8 ${
-            colorClasses[project.color as keyof typeof colorClasses] ||
-            "bg-slate-100"
-          }`}
-        >
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
-            {project.name}
-          </h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
           {project.description && (
-            <p className="text-gray-600">{project.description}</p>
+            <p className="text-muted-foreground">{project.description}</p>
           )}
         </div>
 
@@ -96,7 +82,7 @@ export default function ProjectDetailPage({
                 key={fields.title.key}
                 name={fields.title.name}
                 placeholder="Add a new todo..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
               />
               <input type="hidden" name="projectId" value={project.id} />
               <input type="hidden" name="priority" value="medium" />
@@ -106,20 +92,20 @@ export default function ProjectDetailPage({
               </Button>
             </div>
             {fields.title.errors && (
-              <p className="text-red-500 text-sm">{fields.title.errors[0]}</p>
+              <p className="text-destructive text-sm">{fields.title.errors[0]}</p>
             )}
           </div>
         </Form>
 
         {loaderData.todos.length === 0 ? (
-          <div className="text-center text-gray-600 py-12">
+          <div className="text-center text-muted-foreground py-12">
             <p className="text-lg">No todos yet. Create one to get started!</p>
           </div>
         ) : (
           <TodosTable todos={loaderData.todos} />
         )}
 
-        <div className="mt-8 pt-6 border-t text-sm text-gray-600">
+        <div className="mt-8 pt-6 border-t text-sm text-muted-foreground">
           <p>
             {loaderData.todos.filter((t) => !t.completed).length} of {loaderData.todos.length} tasks
             completed

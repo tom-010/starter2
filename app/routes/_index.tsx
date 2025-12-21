@@ -23,8 +23,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function ProjectsPage({ loaderData }: Route.ComponentProps) {
-  const colors = ["blue", "red", "green", "purple", "yellow"];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   const [form, fields] = useForm({
     constraint: getZodConstraint(CreateProjectSchema),
@@ -38,8 +36,8 @@ export default function ProjectsPage({ loaderData }: Route.ComponentProps) {
     <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Projects</h1>
-          <p className="text-gray-600">Organize your todos into projects</p>
+          <h1 className="text-3xl font-bold mb-2">Projects</h1>
+          <p className="text-muted-foreground">Organize your todos into projects</p>
         </div>
 
         <Form method="post" action={routes.createProject.path} className="mb-8">
@@ -50,23 +48,23 @@ export default function ProjectsPage({ loaderData }: Route.ComponentProps) {
                 key={fields.name.key}
                 name={fields.name.name}
                 placeholder="Create a new project..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              <input type="hidden" name="color" value={randomColor} />
+              <input type="hidden" name="color" value="blue" />
               <Button type="submit" className="px-6">
                 <Plus className="h-4 w-4 mr-2" />
                 New Project
               </Button>
             </div>
             {fields.name.errors && (
-              <p className="text-red-500 text-sm">{fields.name.errors[0]}</p>
+              <p className="text-destructive text-sm">{fields.name.errors[0]}</p>
             )}
           </div>
         </Form>
 
         {loaderData.allProjects.length === 0 ? (
-          <div className="text-center text-gray-600 py-12">
-            <Folder className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <div className="text-center text-muted-foreground py-12">
+            <Folder className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p className="text-lg">No projects yet. Create one to get started!</p>
           </div>
         ) : (

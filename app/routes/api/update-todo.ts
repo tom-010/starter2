@@ -5,10 +5,8 @@ import { eq } from "drizzle-orm";
 import { put } from "~/lib/form-validation";
 import { UpdateTodoSchema } from "~/lib/schemas";
 
-export const action = put(UpdateTodoSchema, async (data, request) => {
-  const { id, title, description, completed, priority, dueDate } = data;
-  const formData = await request.formData();
-  const projectId = formData.get("projectId");
+export const action = put(UpdateTodoSchema, async (data) => {
+  const { id, projectId, title, description, completed, priority, dueDate } = data;
 
   const updates: Record<string, unknown> = {};
   if (title !== undefined) updates.title = title;
