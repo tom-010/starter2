@@ -1,10 +1,15 @@
 import type { Route } from "./+types/_index";
+import type { RouteHandle } from "~/components/page-header";
 import { Form } from "react-router";
 import { Plus, Folder } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { ProjectsTable } from "~/components/projects-table";
 import { db } from "~/db/client";
 import { routes } from "~/lib/routes";
+
+export const handle: RouteHandle = {
+  breadcrumb: { label: "Projects", href: "/" },
+};
 
 export async function loader() {
   const projects = await db.project.findMany();

@@ -1,11 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import type { Route } from "./+types/projects.$id";
-import { Link, Form } from "react-router";
-import { Plus, ArrowLeft, Pencil } from "lucide-react";
+import type { RouteHandle, BreadcrumbItem } from "~/components/page-header";
+import { Form } from "react-router";
+import { Plus, Pencil } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { TodosTable } from "~/components/todos-table";
 import { db } from "~/db/client";
 import { routes } from "~/lib/routes";
+
+export const handle: RouteHandle = {
+  breadcrumb: (data): BreadcrumbItem[] => {
+    const { project } = data as { project: { name: string } };
+    return [
+      { label: "Projects", href: "/" },
+      { label: project.name },
+    ];
+  },
+};
 
 export async function loader({ params }: Route.LoaderArgs) {
   if (!params.id) {
@@ -51,13 +62,6 @@ export default function ProjectDetailPage({
   return (
     <div className="p-6 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <Link to={routes.home} className="inline-block mb-6">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-        </Link>
-
         {editing ? (
           <Form
             method="put"

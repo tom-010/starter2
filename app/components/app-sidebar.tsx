@@ -137,7 +137,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    // TODO: Implement actual logout
+                    console.log("Logout clicked")
+                  }}
+                >
                   <LogOut />
                   Log out
                 </DropdownMenuItem>
