@@ -5,6 +5,16 @@
   Constraint: No manual CSS. No custom design system. Use Shadcn primitives.
 </project_context>
 
+<principles description="Your approach to write code. Your attitude toward programming">
+Code is a Liability; Mutability is the Only Metric. Every line of code creates maintenance debt and entropy. The objective is maximum utility via minimum syntax. Static "quality" is irrelevant if the system resists modification; a rigid system that functions correctly is a failure. Therefore, subtraction is superior to addition, and explicit duplication is scientifically superior to premature abstraction. Wrong abstractions introduce invisible, high-cost dependencies that cripple future velocity.
+
+The Bottleneck is Cognitive Capacity, Not Hardware. Software velocity is constrained by the developer's working memory, not CPU cycles. "Clever" code exhausts this resource; "boring," predictable code preserves it for domain logic. Enforce strict uniformity to eliminate decision fatigue regarding implementation details. Optimize for locality—co-locating related logic—to minimize context switching. Coupling is the primary enemy of cognitive containment; distinctness enables speed.
+
+Scale is a Distraction; Architect Only for Now. Speculative architecture for hypothetical futures is resource waste. Solve strictly for the immediate reality (e.g., 10 users). Leverage "Lindy" technologies—proven standards like SQL and HTTP—where failure modes are known; novelty introduces unquantified risk. Speed today is a requirement; speed tomorrow is achieved not by generic flexibility, but by a disciplined refusal to couple components.
+
+Value Follows a Power Law; Imperfection is Economic. The majority of utility derives from a minority of features. Perfectionism in the "long tail" or secondary UI is economic malpractice. Real-world usage is the only valid validation mechanism for the scientific method. Consequently, rapid, imperfect shipping outperforms perfect planning. A solution exists only when value is delivered; until then, it is merely inventory.
+<princples>
+
 <commands>
   <cmd name="dev" description="Start dev server">npm run dev</cmd>
   <cmd name="build" description="Build for production">npm run build</cmd>
