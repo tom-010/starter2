@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Link, useLocation } from "react-router"
-import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown } from "lucide-react"
+import { Link, useLocation, useNavigate } from "react-router"
+import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown, Search } from "lucide-react"
 
 import {
   Sidebar,
@@ -10,6 +10,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
+  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -24,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
+import { Label } from "~/components/ui/label"
 
 const data = {
   user: {
@@ -53,6 +55,22 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = React.useState("")
+
+  const filteredNavMain = React.useMemo(() => {
+    if (!searchQuery.trim()) return data.navMain
+
+    const query = searchQuery.toLowerCase()
+    return data.navMain
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) =>
+          item.title.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((group) => group.items.length > 0)
+  }, [searchQuery])
 
   return (
     <Sidebar {...props}>
@@ -72,9 +90,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            const firstItem = filteredNavMain[0]?.items[0]
+            if (firstItem) {
+              navigate(firstItem.url)
+              setSearchQuery("")
+            }
+          }}
+        >
+          <SidebarGroup className="py-0">
+            <SidebarGroupContent className="relative">
+              <Label htmlFor="search" className="sr-only">
+                Search
+              </Label>
+              <SidebarInput
+                id="search"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+              <Search className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </form>
       </SidebarHeader>
       <SidebarContent>
-        {data.navMain.map((group) => (
+        {filteredNavMain.map((group) => (
           <SidebarGroup key={group.title}>
             <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -82,7 +126,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {group.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild isActive={location.pathname === item.url}>
-                      <Link to={item.url}>
+                      <Link to={item.url} onClick={() => setSearchQuery("")}>
                         <item.icon className="size-4" />
                         {item.title}
                       </Link>

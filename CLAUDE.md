@@ -21,6 +21,7 @@ Other little ideas:
 - Keep things simple. E.g. no own caching layer.
 - Design for 10 users or less
 - Types are your friend as they provide fast feedback for fast iterations.
+- The Programmers Time, Brain-Capacity and Happyness are the most important resource.
 <princples>
 
 <>
