@@ -5,12 +5,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import { SidebarProvider, SidebarInset } from "~/components/ui/sidebar";
 import { AppSidebar } from "~/components/app-sidebar";
 import { PageHeader } from "~/components/page-header";
+import { getOptionalSession } from "~/lib/auth.server";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
@@ -26,6 +28,13 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getOptionalSession(request);
+  return {
+    user: session?.user ?? null,
+  };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -36,13 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <PageHeader />
-            <main className="flex-1">{children}</main>
-          </SidebarInset>
-        </SidebarProvider>
+        {children}
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -50,8 +53,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export default function App({ loaderData }: Route.ComponentProps) {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+  const user = loaderData.user;
+
+  if (isLoginPage) {
+    return <Outlet />;
+  }
+
+  return (
+    <SidebarProvider>
+      <AppSidebar user={user} />
+      <SidebarInset>
+        <PageHeader />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

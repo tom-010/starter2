@@ -1,6 +1,7 @@
 import type { Route } from "./+types/todo-detail";
 import type { RouteHandle, BreadcrumbItem } from "~/components/page-header";
 import { db } from "~/db/client";
+import { requireAuth } from "~/lib/auth.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -16,7 +17,8 @@ export const handle: RouteHandle = {
   },
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
+  await requireAuth(request);
   const todoId = parseInt(params.id!);
 
   const todo = await db.todo.findUnique({

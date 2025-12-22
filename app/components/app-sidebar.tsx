@@ -26,43 +26,48 @@ import {
 } from "~/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import { Label } from "~/components/ui/label"
+import { authClient } from "~/lib/auth-client"
 
-const data = {
-  user: {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "",
-  },
-  navMain: [
-    {
-      title: "Workspace",
-      items: [
-        { title: "Projects", url: "/", icon: Folder },
-        { title: "Team", url: "#", icon: Users },
-        { title: "Reports", url: "#", icon: BarChart3 },
-      ],
-    },
-    {
-      title: "Organization",
-      items: [
-        { title: "Settings", url: "#", icon: Settings },
-        { title: "Documentation", url: "#", icon: FileText },
-        { title: "Help", url: "#", icon: HelpCircle },
-      ],
-    },
-  ],
+type User = {
+  id: string
+  name: string
+  email: string
+  image?: string | null
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  user: User | null
+}
+
+const navMain = [
+  {
+    title: "Workspace",
+    items: [
+      { title: "Projects", url: "/", icon: Folder },
+      { title: "Team", url: "#", icon: Users },
+      { title: "Reports", url: "#", icon: BarChart3 },
+    ],
+  },
+  {
+    title: "Organization",
+    items: [
+      { title: "Settings", url: "#", icon: Settings },
+      { title: "Documentation", url: "#", icon: FileText },
+      { title: "Help", url: "#", icon: HelpCircle },
+    ],
+  },
+]
+
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = React.useState("")
 
   const filteredNavMain = React.useMemo(() => {
-    if (!searchQuery.trim()) return data.navMain
+    if (!searchQuery.trim()) return navMain
 
     const query = searchQuery.toLowerCase()
-    return data.navMain
+    return navMain
       .map((group) => ({
         ...group,
         items: group.items.filter((item) =>
@@ -71,6 +76,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       }))
       .filter((group) => group.items.length > 0)
   }, [searchQuery])
+
+  async function handleLogout() {
+    await authClient.signOut()
+    navigate("/login")
+  }
+
+  const displayName = user?.name || "User"
+  const displayEmail = user?.email || ""
+  const initials = displayName.split(" ").map((n) => n[0]).join("").toUpperCase()
 
   return (
     <Sidebar {...props}>
@@ -148,14 +162,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={data.user.avatar} alt={data.user.name} />
+                    <AvatarImage src={user?.image || ""} alt={displayName} />
                     <AvatarFallback className="rounded-lg">
-                      {data.user.name.split(" ").map((n) => n[0]).join("")}
+                      {initials}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{data.user.name}</span>
-                    <span className="truncate text-xs text-muted-foreground">{data.user.email}</span>
+                    <span className="truncate font-semibold">{displayName}</span>
+                    <span className="truncate text-xs text-muted-foreground">{displayEmail}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -169,24 +183,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={data.user.avatar} alt={data.user.name} />
+                      <AvatarImage src={user?.image || ""} alt={displayName} />
                       <AvatarFallback className="rounded-lg">
-                        {data.user.name.split(" ").map((n) => n[0]).join("")}
+                        {initials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{data.user.name}</span>
-                      <span className="truncate text-xs text-muted-foreground">{data.user.email}</span>
+                      <span className="truncate font-semibold">{displayName}</span>
+                      <span className="truncate text-xs text-muted-foreground">{displayEmail}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => {
-                    // TODO: Implement actual logout
-                    console.log("Logout clicked")
-                  }}
-                >
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut />
                   Log out
                 </DropdownMenuItem>

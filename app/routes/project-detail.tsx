@@ -13,6 +13,7 @@ import {
   updateTodoSchema,
   deleteByIdSchema,
 } from "~/lib/schemas";
+import { requireAuth } from "~/lib/auth.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -24,7 +25,8 @@ export const handle: RouteHandle = {
   },
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
+  await requireAuth(request);
   if (!params.id) {
     throw new Response("Not Found", { status: 404 });
   }
