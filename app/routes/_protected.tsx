@@ -1,13 +1,21 @@
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 import type { Route } from "./+types/_protected";
-import { requireAuth } from "~/lib/auth.server";
+import { auth } from "~/lib/auth.server";
 
-// Layout route that protects all nested routes.
-// Auth check runs before child loaders via layout hierarchy.
-export async function loader({ request }: Route.LoaderArgs) {
-  await requireAuth(request);
-  return null;
-}
+// Middleware runs BEFORE child loaders - strict auth gate
+export const middleware: Route.MiddlewareFunction[] = [
+  async ({ request }, next) => {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
+
+    if (!session) {
+      throw redirect("/login");
+    }
+
+    return next();
+  },
+];
 
 export default function ProtectedLayout() {
   return <Outlet />;
