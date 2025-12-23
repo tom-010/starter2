@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { UsersTable } from "~/components/users-table";
 import { parseFormDataOrThrow } from "~/lib/forms";
 import { deleteByStringIdSchema } from "~/lib/schemas";
+import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (): BreadcrumbItem[] => [
@@ -48,6 +49,7 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   await db.user.delete({ where: { id } });
+  log.info({ deletedUserId: id, byUserId: session.user.id }, "user_deleted");
 
   return redirect("/admin/users");
 }

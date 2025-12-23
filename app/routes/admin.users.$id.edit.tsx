@@ -9,6 +9,7 @@ import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { updateUserSchema } from "~/lib/schemas";
+import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -88,6 +89,7 @@ export async function action({ request, params }: Route.ActionArgs) {
     data: updateData,
   });
 
+  log.info({ userId: params.id, byUserId: session.user.id, passwordChanged: !!result.data.password }, "user_updated");
   return redirect("/admin/users");
 }
 

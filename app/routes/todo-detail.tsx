@@ -23,6 +23,7 @@ import {
 import { writeFile, unlink, mkdir } from "fs/promises";
 import { join } from "path";
 import { queueThumbnailJob } from "~/lib/jobs.server";
+import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -160,6 +161,7 @@ export async function action({ request, params }: Route.ActionArgs) {
         });
       }
 
+      log.info({ todoId, attachmentId: attachment.id, filename: file.name, size: file.size }, "attachment_uploaded");
       return redirect(`/todos/${todoId}`);
     }
 
@@ -185,6 +187,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       }
 
       await db.attachment.delete({ where: { id } });
+      log.info({ todoId, attachmentId: id, userId }, "attachment_deleted");
       return redirect(`/todos/${todoId}`);
     }
 
@@ -215,6 +218,7 @@ export async function action({ request, params }: Route.ActionArgs) {
         },
       });
 
+      log.info({ todoId, assignedUserId: assignUserId, assignedBy: userId }, "user_assigned");
       return redirect(`/todos/${todoId}`);
     }
 

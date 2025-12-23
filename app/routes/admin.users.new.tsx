@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { createUserSchema } from "~/lib/schemas";
+import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (): BreadcrumbItem[] => [
@@ -77,6 +78,7 @@ export async function action({ request }: Route.ActionArgs) {
     },
   });
 
+  log.info({ userId, email: result.data.email, roles: result.data.roles }, "user_created");
   return redirect("/admin/users");
 }
 

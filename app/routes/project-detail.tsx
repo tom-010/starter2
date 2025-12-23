@@ -14,6 +14,7 @@ import {
   updateTodoSchema,
   deleteByIdSchema,
 } from "~/lib/schemas";
+import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -73,6 +74,7 @@ export async function action({ request, params }: Route.ActionArgs) {
 
     case "deleteProject": {
       await db.project.delete({ where: { id: projectId } });
+      log.info({ projectId, userId }, "project_deleted");
       return redirect("/");
     }
 
