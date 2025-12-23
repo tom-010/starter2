@@ -9,7 +9,6 @@
 - [ ] Simple Observability. KISS!
 - [ ] feature flags
 - [x] settings.py
-
 - [ ] tool: rule of 10
 - [ ] automatic skills and protocols incl. MCPs
 

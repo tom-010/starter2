@@ -10,7 +10,7 @@ import { createProjectSchema, deleteByIdSchema } from "~/lib/schemas";
 import { log } from "~/lib/logger.server";
 
 export const handle: RouteHandle = {
-  breadcrumb: { label: "Projects", href: "/" },
+  breadcrumb: { label: "Projects", href: "/projects" },
 };
 
 export async function loader() {
@@ -27,7 +27,7 @@ export async function action({ request }: Route.ActionArgs) {
       const { id } = parseFormDataOrThrow(formData, deleteByIdSchema);
       await db.project.delete({ where: { id } });
       log.info({ projectId: id }, "project_deleted");
-      return redirect("/");
+      return redirect("/projects");
     }
 
     default: {

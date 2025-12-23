@@ -12,7 +12,9 @@ export default [
 
   // Protected routes (auth middleware runs first)
   layout("routes/_protected.tsx", [
-    index("routes/projects-list.tsx"),
+    index("routes/home.tsx"), // Redirects based on __ENABLE_DASHBOARD__ flag
+    route("dashboard", "routes/dashboard.tsx"),
+    route("projects", "routes/projects-list.tsx"),
     route("projects/:id", "routes/project-detail.tsx"),
     route("todos/:id", "routes/todo-detail.tsx"),
     route("todos/:id/edit", "routes/todo-edit.tsx"),

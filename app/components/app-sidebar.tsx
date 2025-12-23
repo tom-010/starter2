@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, useLocation, useNavigate } from "react-router"
-import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown, Search } from "lucide-react"
+import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown, Search, LayoutDashboard } from "lucide-react"
 
 import {
   Sidebar,
@@ -42,14 +42,20 @@ type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
 }
 
 function getNavItems(isAdmin: boolean) {
+  const workspaceItems = [
+    { title: "Projects", url: "/projects", icon: Folder },
+    { title: "Team", url: "#", icon: Users },
+    { title: "Reports", url: "#", icon: BarChart3 },
+  ]
+
+  if (__ENABLE_DASHBOARD__) {
+    workspaceItems.unshift({ title: "Dashboard", url: "/dashboard", icon: LayoutDashboard })
+  }
+
   const items = [
     {
       title: "Workspace",
-      items: [
-        { title: "Projects", url: "/", icon: Folder },
-        { title: "Team", url: "#", icon: Users },
-        { title: "Reports", url: "#", icon: BarChart3 },
-      ],
+      items: workspaceItems,
     },
     {
       title: "Organization",
