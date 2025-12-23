@@ -47,6 +47,32 @@ export const deleteByIdSchema = z.object({
   id: z.coerce.number(),
 });
 
+export const deleteByStringIdSchema = z.object({
+  id: z.string().min(1),
+});
+
+// ============================================================================
+// User Schemas
+// ============================================================================
+
+import { ROLES } from "~/lib/roles";
+
+const rolesEnum = z.enum(ROLES);
+
+export const createUserSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  roles: z.array(rolesEnum).min(1, "At least one role required"),
+});
+
+export const updateUserSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name too long"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters").optional().or(z.literal("")),
+  roles: z.array(rolesEnum).min(1, "At least one role required"),
+});
+
 // ============================================================================
 // Type Exports
 // ============================================================================
@@ -56,3 +82,5 @@ export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 export type CreateTodoInput = z.infer<typeof createTodoSchema>;
 export type UpdateTodoInput = z.infer<typeof updateTodoSchema>;
 export type Priority = z.infer<typeof priorityEnum>;
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;

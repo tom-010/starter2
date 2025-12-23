@@ -1,10 +1,12 @@
 import { db } from "../app/db/client";
 import { auth } from "../app/lib/auth.server";
+import { serializeRoles, type Role } from "../app/lib/roles";
 
 async function seedUser() {
   const email = "admin@example.com";
   const password = "admin";
   const name = "Admin";
+  const roles: Role[] = ["user", "admin"];
 
   // Check if user already exists
   const existingUser = await db.user.findUnique({
@@ -12,7 +14,12 @@ async function seedUser() {
   });
 
   if (existingUser) {
-    console.log(`User ${email} already exists. Skipping...`);
+    // Update roles if user exists
+    await db.user.update({
+      where: { email },
+      data: { roles: serializeRoles(roles) },
+    });
+    console.log(`User ${email} already exists. Updated roles to ${roles.join(", ")}.`);
     return;
   }
 
@@ -30,6 +37,7 @@ async function seedUser() {
       id: userId,
       email,
       name,
+      roles: serializeRoles(roles),
       emailVerified: true,
     },
   });
@@ -45,7 +53,7 @@ async function seedUser() {
     },
   });
 
-  console.log(`Created user: ${email} with password: ${password}`);
+  console.log(`Created user: ${email} with password: ${password} (roles: ${roles.join(", ")})`);
 }
 
 seedUser()

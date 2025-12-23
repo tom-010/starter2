@@ -16,6 +16,9 @@ export default [
     route("projects/:id", "routes/project-detail.tsx"),
     route("todos/:id", "routes/todo-detail.tsx"),
     route("todos/:id/edit", "routes/todo-edit.tsx"),
+    route("admin/users", "routes/admin.users.tsx"),
+    route("admin/users/new", "routes/admin.users.new.tsx"),
+    route("admin/users/:id/edit", "routes/admin.users.$id.edit.tsx"),
   ]),
 
   route("*", "routes/not-found.tsx"),
