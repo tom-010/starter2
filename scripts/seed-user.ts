@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "../app/db/client";
 import { auth } from "../app/lib/auth.server";
 import { serializeRoles, type Role } from "../app/lib/roles";
@@ -14,12 +15,21 @@ async function seedUser() {
   });
 
   if (existingUser) {
-    // Update roles if user exists
+    // Update roles and password if user exists
+    const ctx = await auth.$context;
+    const hashedPassword = await ctx.password.hash(password);
+
     await db.user.update({
       where: { email },
       data: { roles: serializeRoles(roles) },
     });
-    console.log(`User ${email} already exists. Updated roles to ${roles.join(", ")}.`);
+
+    await db.account.updateMany({
+      where: { userId: existingUser.id, providerId: "credential" },
+      data: { password: hashedPassword },
+    });
+
+    console.log(`User ${email} already exists. Updated roles and password.`);
     return;
   }
 

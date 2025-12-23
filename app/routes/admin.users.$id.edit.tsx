@@ -5,6 +5,7 @@ import { db } from "~/db/client";
 import { auth, requireAdmin } from "~/lib/auth.server";
 import { parseRoles, serializeRoles, ROLES, type Role } from "~/lib/roles";
 import { Button } from "~/components/ui/button";
+import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { updateUserSchema } from "~/lib/schemas";
@@ -147,16 +148,17 @@ export default function EditUserPage({ loaderData }: Route.ComponentProps) {
             <Label>Roles</Label>
             <div className="flex gap-4">
               {allRoles.map((role) => (
-                <label key={role} className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
+                <div key={role} className="flex items-center gap-2">
+                  <Checkbox
+                    id={`role-${role}`}
                     name="roles"
                     value={role}
                     defaultChecked={user.roles.includes(role)}
-                    className="h-4 w-4 rounded border-gray-300"
                   />
-                  <span className="font-normal capitalize">{role}</span>
-                </label>
+                  <Label htmlFor={`role-${role}`} className="font-normal capitalize cursor-pointer">
+                    {role}
+                  </Label>
+                </div>
               ))}
             </div>
             {errors?.roles && (

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Project {
@@ -36,16 +36,17 @@ model Todo {
 }
 
 model Attachment {
-  id        Int      @id @default(autoincrement())
-  todoId    Int      @map("todo_id")
-  userId    String   @map("user_id")
-  filename  String
-  filepath  String
-  mimetype  String
-  size      Int
-  createdAt DateTime @default(now()) @map("created_at")
-  todo      Todo     @relation(fields: [todoId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            Int      @id @default(autoincrement())
+  todoId        Int      @map("todo_id")
+  userId        String   @map("user_id")
+  filename      String
+  filepath      String
+  mimetype      String
+  size          Int
+  thumbnailPath String?  @map("thumbnail_path")
+  createdAt     DateTime @default(now()) @map("created_at")
+  todo          Todo     @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("attachments")
 }

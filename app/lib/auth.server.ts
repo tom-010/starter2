@@ -3,11 +3,14 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { redirect } from "react-router";
 import { db } from "~/db/client";
 import { hasRole, type Role } from "~/lib/roles";
+import { config } from "~/lib/config.server";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
-    provider: "sqlite",
+    provider: "postgresql",
   }),
+  secret: config.auth.secret,
+  baseURL: config.auth.url,
   emailAndPassword: {
     enabled: true,
     disableSignUp: true,

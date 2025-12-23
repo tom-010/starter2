@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Route } from "./+types/todo-detail";
 import type { RouteHandle, BreadcrumbItem } from "~/components/page-header";
 import { Form, Link, redirect } from "react-router";
-import { Pencil, Paperclip, X, UserPlus, Trash2, Search } from "lucide-react";
+import { Pencil, Paperclip, X, UserPlus, Trash2, Search, Image } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
@@ -22,6 +22,7 @@ import {
 } from "~/lib/schemas";
 import { writeFile, unlink, mkdir } from "fs/promises";
 import { join } from "path";
+import { queueThumbnailJob } from "~/lib/jobs.server";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -140,7 +141,7 @@ export async function action({ request, params }: Route.ActionArgs) {
       const buffer = Buffer.from(await file.arrayBuffer());
       await writeFile(fullPath, buffer);
 
-      await db.attachment.create({
+      const attachment = await db.attachment.create({
         data: {
           todoId,
           userId,
@@ -150,6 +151,14 @@ export async function action({ request, params }: Route.ActionArgs) {
           size: file.size,
         },
       });
+
+      // Queue thumbnail generation for images
+      if (file.type.startsWith("image/")) {
+        await queueThumbnailJob({
+          attachmentId: attachment.id,
+          filepath,
+        });
+      }
 
       return redirect(`/todos/${todoId}`);
     }
@@ -431,19 +440,39 @@ export default function TodoDetailPage({ loaderData }: Route.ComponentProps) {
                   key={attachment.id}
                   className="flex items-center justify-between py-2 px-3 bg-muted rounded-md"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <a
-                      href={attachment.filepath}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline truncate"
-                    >
-                      {attachment.filename}
-                    </a>
-                    <span className="text-muted-foreground text-xs shrink-0">
-                      ({formatFileSize(attachment.size)})
-                    </span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {attachment.thumbnailPath ? (
+                      <a
+                        href={attachment.filepath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={attachment.thumbnailPath}
+                          alt={attachment.filename}
+                          className="h-10 w-10 rounded object-cover shrink-0"
+                        />
+                      </a>
+                    ) : attachment.mimetype.startsWith("image/") ? (
+                      <div className="h-10 w-10 rounded bg-muted-foreground/20 flex items-center justify-center shrink-0">
+                        <Image className="h-5 w-5 text-muted-foreground animate-pulse" />
+                      </div>
+                    ) : (
+                      <Paperclip className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    )}
+                    <div className="min-w-0">
+                      <a
+                        href={attachment.filepath}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline truncate block"
+                      >
+                        {attachment.filename}
+                      </a>
+                      <span className="text-muted-foreground text-xs">
+                        {formatFileSize(attachment.size)}
+                      </span>
+                    </div>
                   </div>
                   {(isOwner || attachment.userId === currentUserId) && (
                     <Form method="post">

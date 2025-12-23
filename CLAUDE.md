@@ -44,6 +44,7 @@ Other little ideas:
     UI Library:  ./app/components/ui/
     Routes:      ./app/routes/
     Utilities:   ./app/lib/utils.ts
+    Async Tasks: ./app/lib/jobs.server.ts (queue), ./scripts/worker.ts (tasks) — see docs/async-tasks.md                                                                                    
   </map>
 
   <pattern name="Data Mutation (Strict)">
@@ -61,6 +62,12 @@ Other little ideas:
   <pattern name="Code Output Behavior">
     - **Full Files:** When generating code for files under 200 lines, ALWAYS output the full file content. Do not use `// ... existing code`.
     - **Reasoning:** Optimizes for "Copy-Paste" velocity.
+  </pattern>
+
+  <pattern name="Async Tasks">
+    - **Graphile Worker:** Background jobs via PostgreSQL. Define tasks in `scripts/worker.ts`, queue from actions via `~/lib/jobs.server.ts`.
+    - **Run worker:** `npm run worker` in separate terminal alongside dev server.
+    - **Details:** See `docs/async-tasks.md`.
   </pattern>
 </architecture>
 

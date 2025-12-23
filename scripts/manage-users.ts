@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { db } from "../app/db/client";
 import { auth } from "../app/lib/auth.server";
 
