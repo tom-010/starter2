@@ -2,7 +2,7 @@
 - [x] no api
 - [x] auth
 - [x] claude.md
-- [ ] testing, approach
+- [ ] testing approach
 - [ ] boring forms
 - [ ] python services and integration
 - [ ] feedback mechanisms (server logs, tests, browser, antigravity?)
@@ -11,4 +11,4 @@
 - [x] settings.py
 - [ ] tool: rule of 10
 - [ ] automatic skills and protocols incl. MCPs
-
+- [ ] a very simple prod deployment

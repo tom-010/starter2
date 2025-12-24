@@ -1,12 +1,13 @@
 [project]
-name = "image2"
+name = "image"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "betterproto[compiler]>=1.2.5",
-    "grpcio-tools>=1.76.0",
-    "grpclib>=0.4.9",
+    "fastapi>=0.127.0",
     "pillow>=12.0.0",
+    "python-multipart>=0.0.21",
+    "structlog>=25.5.0",
+    "uvicorn>=0.40.0",
 ]
