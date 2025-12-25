@@ -21,6 +21,7 @@ export default [
     route("admin/users", "routes/admin.users.tsx"),
     route("admin/users/new", "routes/admin.users.new.tsx"),
     route("admin/users/:id/edit", "routes/admin.users.$id.edit.tsx"),
+    route("debug/py", "routes/debug-py.tsx"),
   ]),
 
   route("*", "routes/not-found.tsx"),

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, useLocation, useNavigate } from "react-router"
-import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown, Search, LayoutDashboard } from "lucide-react"
+import { CheckSquare2, Folder, Settings, Users, FileText, BarChart3, HelpCircle, LogOut, ChevronsUpDown, Search, LayoutDashboard, Bug } from "lucide-react"
 
 import {
   Sidebar,
@@ -73,6 +73,12 @@ function getNavItems(isAdmin: boolean) {
       items: [{ title: "Users", url: "/admin/users", icon: Users }],
     })
   }
+
+  // Dev section (always visible for debugging)
+  items.push({
+    title: "Dev",
+    items: [{ title: "Python Bridge", url: "/debug/py", icon: Bug }],
+  })
 
   return items
 }

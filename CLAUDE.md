@@ -34,6 +34,8 @@ Other little ideas:
   <cmd name="db:generate" description="Generate Prisma client">npm run db:generate</cmd>
   <cmd name="db:studio" description="View database GUI">npm run db:studio</cmd>
   <cmd name="ui:add" description="Install component">npx shadcn@latest add</cmd>
+  <cmd name="py:sync" description="Regenerate Python SDK">./scripts/sync-py.sh</cmd>
+  <cmd name="py:dev" description="Start Python service">cd py && uv run python main.py</cmd>
 </commands>
 
 <architecture>
@@ -44,7 +46,8 @@ Other little ideas:
     UI Library:  ./app/components/ui/
     Routes:      ./app/routes/
     Utilities:   ./app/lib/utils.ts
-    Async Tasks: ./app/lib/jobs.server.ts (queue), ./scripts/worker.ts (tasks) — see docs/async-tasks.md                                                                                    
+    Async Tasks: ./app/lib/jobs.server.ts (queue), ./scripts/worker.ts (tasks) — see docs/async-tasks.md
+    Python:      ./py/ (FastAPI), ./app/lib/py/client.ts (typed RPC) — see docs/python-bridge.md
   </map>
 
   <pattern name="Data Mutation (Strict)">
@@ -68,6 +71,15 @@ Other little ideas:
     - **Graphile Worker:** Background jobs via PostgreSQL. Define tasks in `scripts/worker.ts`, queue from actions via `~/lib/jobs.server.ts`.
     - **Run worker:** `npm run worker` in separate terminal alongside dev server.
     - **Details:** See `docs/async-tasks.md`.
+  </pattern>
+
+  <pattern name="Python (py/)">
+    - **NOT a REST API.** The `py/` folder contains FastAPI code, but this is RPC, not REST. It's inter-language communication — TypeScript calling Python functions with type safety.
+    - **Why:** Python handles compute-heavy tasks (image processing, ML). Same container in prod, 100% coupled to this app.
+    - **How types work:** Pydantic models → FastAPI generates OpenAPI → `@hey-api/openapi-ts` generates TypeScript SDK.
+    - **After changing Python:** Run `./scripts/sync-py.sh` to regenerate `app/lib/py/*.gen.ts`.
+    - **Import:** `import { someFunction } from "~/lib/py/client"`
+    - **Details:** See `docs/python-bridge.md`.
   </pattern>
 </architecture>
 
@@ -111,5 +123,10 @@ Other little ideas:
     1. Create route file in `app/routes/`
     2. Register in `app/routes.ts`
     3. Add loader/action as needed
+  </workflow>
+  <workflow name="Add a Python endpoint">
+    1. Define Pydantic model + endpoint in `py/main.py`
+    2. Run `./scripts/sync-py.sh`
+    3. Import from `~/lib/py/client` in TypeScript
   </workflow>
 </workflows>

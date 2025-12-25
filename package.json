@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@conform-to/react": "^1.15.0",
+    "@hey-api/client-fetch": "^0.10.0",
     "@conform-to/zod": "^1.15.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
@@ -46,6 +47,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.71.0",
     "@react-router/dev": "^7.10.1",
     "@tailwindcss/vite": "^4.1.13",
     "@types/node": "^22",

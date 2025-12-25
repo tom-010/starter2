@@ -1,14 +1,17 @@
 import logging
-import os
-import sys
 from io import BytesIO
+from logger import init_logging
+init_logging()
 
 from fastapi import FastAPI, File, Query, UploadFile
+from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
 from PIL import Image
 
-app = FastAPI(title="Image Resize Service")
+
 log = logging.getLogger("app")
+
+app = FastAPI(title="Image Resize Service")
 
 
 @app.get("/hi")
@@ -21,6 +24,16 @@ async def hello():
     log.critical("critical message")
     return {"message": "Hello, World!"}
 
+class GreetPersonSchema(BaseModel):
+    first_name: str
+    last_name: str
+
+@app.post("/greet")
+async def greet_person(person: GreetPersonSchema):
+    """Greet a person by their first and last name."""
+    greeting = f"Hello, {person.first_name} {person.last_name}!"
+    log.info(f"Greeting generated: {greeting}")
+    return {"greeting": greeting}
 
 @app.post("/resize")
 async def resize_image(
@@ -47,16 +60,6 @@ async def resize_image(
 
 if __name__ == "__main__":
     import uvicorn
-
-    is_dev = os.environ.get("ENV", "development") == "development"
-    logging.basicConfig(
-        level=logging.DEBUG if is_dev else logging.INFO,
-        format="%(asctime)s %(levelname)-8s %(name)s:%(lineno)d — %(message)s",
-        datefmt="%H:%M:%S" if is_dev else "%Y-%m-%dT%H:%M:%S",
-        stream=sys.stdout,
-        force=True,
-    )
-    logging.getLogger("uvicorn.access").setLevel(logging.WARNING)
-
+    
     log.info("starting server on 0.0.0.0:8001")
     uvicorn.run(app, host="0.0.0.0", port=8001)
