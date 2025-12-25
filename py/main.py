@@ -27,7 +27,7 @@ async def hello():
 class GreetPersonSchema(BaseModel):
     first_name: str
     last_name: str
-    greeting: str | None = None
+    age: int | None = None
 
 @app.post("/greet")
 async def greet_person(person: GreetPersonSchema):
