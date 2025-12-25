@@ -74,6 +74,7 @@ Other little ideas:
   </pattern>
 
   <pattern name="Python (py/)">
+    - **Only use Python if explicitly requested.** Default to TypeScript for everything.
     - **NOT a REST API.** The `py/` folder contains FastAPI code, but this is RPC, not REST. It's inter-language communication — TypeScript calling Python functions with type safety.
     - **SERVER-SIDE ONLY.** Never call Python from the browser. Only call from loaders/actions. The Python service is internal (localhost:8001), not exposed to clients.
     - **Why:** Python handles compute-heavy tasks (image processing, ML). Same container in prod, 100% coupled to this app.

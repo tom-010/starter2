@@ -3,19 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "concurrently --kill-others -n \"VITE,WORKER,PY\" -c \"bgBlue.bold,bgMagenta.bold,bgYellow.bold\" \"npm run dev:vite\" \"npm run dev:worker\" \"npm run dev:py\"",
+    "dev:vite": "react-router dev",
+    "dev:worker": "npx tsx scripts/worker.ts",
+    "dev:py": "cd py && uv run python -m uvicorn main:app --reload --host 0.0.0.0 --port 8001",
     "build": "react-router build",
-    "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "db:generate": "prisma generate",
     "db:migrate": "prisma db push",
-    "db:studio": "prisma studio",
-    "worker": "npx tsx scripts/worker.ts"
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@conform-to/react": "^1.15.0",
-    "@hey-api/client-fetch": "^0.10.0",
     "@conform-to/zod": "^1.15.0",
+    "@hey-api/client-fetch": "^0.10.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "@radix-ui/react-avatar": "^1.1.11",
@@ -54,6 +56,7 @@
     "@types/pg": "^8.16.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
     "prisma": "^7.2.0",
     "shadcn": "^3.6.2",
     "tailwindcss": "^4.1.13",
