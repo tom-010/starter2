@@ -13,4 +13,15 @@ const PY_URL = typeof window === "undefined"
   ? process.env.PY_URL ?? "http://localhost:8001"
   : "http://localhost:8001"
 
-client.setConfig({ baseUrl: PY_URL })
+// Timeout for Python calls (15 minutes - Python can run long computations)
+const PY_TIMEOUT_MS = 15 * 60 * 1000
+
+client.setConfig({
+  baseUrl: PY_URL,
+  // Custom fetch with extended timeout for long-running Python operations
+  fetch: (request) => {
+    return fetch(request, {
+      signal: AbortSignal.timeout(PY_TIMEOUT_MS),
+    })
+  },
+})
