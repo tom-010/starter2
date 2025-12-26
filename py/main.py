@@ -1,5 +1,7 @@
 import logging
+import os
 from io import BytesIO
+from pathlib import Path
 from logger import init_logging
 init_logging()
 
@@ -12,6 +14,9 @@ from PIL import Image
 log = logging.getLogger("app")
 
 app = FastAPI(title="Image Resize Service")
+
+# Base path for uploads (configurable via env)
+UPLOADS_BASE = Path(os.getenv("UPLOADS_BASE", "/home/tom/Projects/starter2/public"))
 
 
 @app.get("/hi")
@@ -58,8 +63,68 @@ async def resize_image(
     return StreamingResponse(output, media_type=media_type)
 
 
+class GenerateThumbnailRequest(BaseModel):
+    filepath: str  # e.g., "/uploads/123-file.jpg"
+    width: int = 200
+    height: int = 200
+
+class GenerateThumbnailResponse(BaseModel):
+    thumbnail_path: str  # e.g., "/uploads/thumbnails/thumb-123-file.jpg"
+
+@app.post("/generate-thumbnail")
+async def generate_thumbnail(request: GenerateThumbnailRequest) -> GenerateThumbnailResponse:
+    """Generate a thumbnail for an image file on disk."""
+    # Extract filename from filepath (e.g., /uploads/123-file.jpg -> 123-file.jpg)
+    filename = request.filepath.replace("/uploads/", "")
+
+    input_path = UPLOADS_BASE / "uploads" / filename
+    thumbs_dir = UPLOADS_BASE / "uploads" / "thumbnails"
+    thumbs_dir.mkdir(parents=True, exist_ok=True)
+
+    # Generate thumbnail filename
+    thumb_filename = f"thumb-{filename}"
+    # Ensure .jpg extension for thumbnails
+    thumb_filename = Path(thumb_filename).stem + ".jpg"
+    output_path = thumbs_dir / thumb_filename
+
+    log.info(f"Generating thumbnail: {input_path} -> {output_path}")
+
+    # Open and resize image
+    with Image.open(input_path) as img:
+        # Convert to RGB if necessary (for PNG with transparency, etc.)
+        if img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+
+        # Calculate crop box for center crop
+        orig_width, orig_height = img.size
+        target_ratio = request.width / request.height
+        orig_ratio = orig_width / orig_height
+
+        if orig_ratio > target_ratio:
+            # Image is wider, crop sides
+            new_width = int(orig_height * target_ratio)
+            left = (orig_width - new_width) // 2
+            img = img.crop((left, 0, left + new_width, orig_height))
+        else:
+            # Image is taller, crop top/bottom
+            new_height = int(orig_width / target_ratio)
+            top = (orig_height - new_height) // 2
+            img = img.crop((0, top, orig_width, top + new_height))
+
+        # Resize to target dimensions
+        img = img.resize((request.width, request.height), Image.Resampling.LANCZOS)
+
+        # Save as JPEG
+        img.save(output_path, "JPEG", quality=80)
+
+    thumbnail_path = f"/uploads/thumbnails/{thumb_filename}"
+    log.info(f"Thumbnail generated: {thumbnail_path}")
+
+    return GenerateThumbnailResponse(thumbnail_path=thumbnail_path)
+
+
 if __name__ == "__main__":
     import uvicorn
-    
+
     log.info("starting server on 0.0.0.0:8001")
     uvicorn.run(app, host="0.0.0.0", port=8001)

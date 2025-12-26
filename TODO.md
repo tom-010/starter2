@@ -12,3 +12,5 @@
 - [ ] tool: rule of 10
 - [ ] automatic skills and protocols incl. MCPs
 - [ ] a very simple prod deployment
+- [ ] Agent knowledge base
+- [ ] Python Service Cataglog. Service catalog? 

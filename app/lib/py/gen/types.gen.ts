@@ -11,6 +11,34 @@ export type BodyResizeImageResizePost = {
 };
 
 /**
+ * GenerateThumbnailRequest
+ */
+export type GenerateThumbnailRequest = {
+    /**
+     * Filepath
+     */
+    filepath: string;
+    /**
+     * Width
+     */
+    width?: number;
+    /**
+     * Height
+     */
+    height?: number;
+};
+
+/**
+ * GenerateThumbnailResponse
+ */
+export type GenerateThumbnailResponse = {
+    /**
+     * Thumbnail Path
+     */
+    thumbnail_path: string;
+};
+
+/**
  * GreetPersonSchema
  */
 export type GreetPersonSchema = {
@@ -122,6 +150,31 @@ export type ResizeImageResizePostResponses = {
      */
     200: unknown;
 };
+
+export type GenerateThumbnailGenerateThumbnailPostData = {
+    body: GenerateThumbnailRequest;
+    path?: never;
+    query?: never;
+    url: '/generate-thumbnail';
+};
+
+export type GenerateThumbnailGenerateThumbnailPostErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GenerateThumbnailGenerateThumbnailPostError = GenerateThumbnailGenerateThumbnailPostErrors[keyof GenerateThumbnailGenerateThumbnailPostErrors];
+
+export type GenerateThumbnailGenerateThumbnailPostResponses = {
+    /**
+     * Successful Response
+     */
+    200: GenerateThumbnailResponse;
+};
+
+export type GenerateThumbnailGenerateThumbnailPostResponse = GenerateThumbnailGenerateThumbnailPostResponses[keyof GenerateThumbnailGenerateThumbnailPostResponses];
 
 export type ClientOptions = {
     baseUrl: `${string}://openapi.json` | (string & {});

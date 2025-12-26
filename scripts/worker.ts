@@ -1,13 +1,18 @@
 import "dotenv/config";
 import { run, type Task, type TaskList } from "graphile-worker";
-import sharp from "sharp";
-import { join } from "path";
-import { mkdir } from "fs/promises";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { createClient } from "@hey-api/client-fetch";
+import { generateThumbnailGenerateThumbnailPost } from "../app/lib/py/gen/sdk.gen";
+import type { GenerateThumbnailResponse } from "../app/lib/py/gen/types.gen";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter });
+
+// Configure Python service client for the worker
+const pyClient = createClient({
+  baseUrl: process.env.PY_URL ?? "http://localhost:8001",
+});
 
 interface GenerateThumbnailPayload {
   attachmentId: number;
@@ -18,22 +23,22 @@ const generateThumbnail: Task = async (payload, helpers) => {
   const { attachmentId, filepath } = payload as GenerateThumbnailPayload;
   helpers.logger.info(`Generating thumbnail for attachment ${attachmentId}`);
 
-  const uploadsDir = join(process.cwd(), "public", "uploads");
-  const thumbsDir = join(process.cwd(), "public", "uploads", "thumbnails");
-  await mkdir(thumbsDir, { recursive: true });
-
-  // Extract filename from filepath (e.g., /uploads/123-file.jpg -> 123-file.jpg)
-  const filename = filepath.replace("/uploads/", "");
-  const inputPath = join(uploadsDir, filename);
-  const thumbFilename = `thumb-${filename}`;
-  const outputPath = join(thumbsDir, thumbFilename);
-  const thumbnailPath = `/uploads/thumbnails/${thumbFilename}`;
-
   try {
-    await sharp(inputPath)
-      .resize(200, 200, { fit: "cover", position: "center" })
-      .jpeg({ quality: 80 })
-      .toFile(outputPath);
+    const response = await generateThumbnailGenerateThumbnailPost({
+      client: pyClient,
+      body: {
+        filepath,
+        width: 200,
+        height: 200,
+      },
+    });
+
+    if (response.error || !response.data) {
+      throw new Error(`Python service error: ${JSON.stringify(response.error)}`);
+    }
+
+    const data = response.data as unknown as GenerateThumbnailResponse;
+    const thumbnailPath = data.thumbnail_path;
 
     await db.attachment.update({
       where: { id: attachmentId },
