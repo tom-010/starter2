@@ -3,13 +3,14 @@ import type { RouteHandle, BreadcrumbItem } from "~/components/page-header";
 import { Form, Link, redirect, useActionData } from "react-router";
 import { db } from "~/db/client";
 import { auth, requireAdmin } from "~/lib/auth.server";
-import { parseRoles, serializeRoles, ROLES, type Role } from "~/lib/roles";
+import { parseRoles, serializeRoles, ROLES } from "~/lib/roles";
 import { Button } from "~/components/ui/button";
 import { Checkbox } from "~/components/ui/checkbox";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { updateUserSchema } from "~/lib/schemas";
 import { log } from "~/lib/logger.server";
+import { parseForm, useFormValidation } from "~/lib/utils";
 
 export const handle: RouteHandle = {
   breadcrumb: (data): BreadcrumbItem[] => {
@@ -49,13 +50,7 @@ export async function action({ request, params }: Route.ActionArgs) {
   const session = await requireAdmin(request);
 
   const formData = await request.formData();
-
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const roles = formData.getAll("roles") as Role[];
-
-  const result = updateUserSchema.safeParse({ name, email, password, roles });
+  const result = parseForm(updateUserSchema, formData);
 
   if (!result.success) {
     return { errors: result.error.flatten().fieldErrors };
@@ -103,14 +98,14 @@ export function meta({ data }: Route.MetaArgs) {
 export default function EditUserPage({ loaderData }: Route.ComponentProps) {
   const { user, allRoles } = loaderData;
   const actionData = useActionData<typeof action>();
-  const errors = actionData?.errors;
+  const { onSubmit, errors } = useFormValidation(updateUserSchema, actionData?.errors);
 
   return (
     <div className="p-6 md:p-8">
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Edit User</h1>
 
-        <Form method="post" className="space-y-6">
+        <Form method="post" className="space-y-6" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input id="name" name="name" defaultValue={user.name} required />

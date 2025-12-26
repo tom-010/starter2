@@ -45,7 +45,7 @@ Other little ideas:
     Auth:        ./app/lib/auth.server.ts (BetterAuth + Prisma adapter)
     UI Library:  ./app/components/ui/
     Routes:      ./app/routes/
-    Utilities:   ./app/lib/utils.ts
+    Utilities:   ./app/lib/utils.ts (cn, parseForm, useFormValidation)
     Async Tasks: ./app/lib/jobs.server.ts (queue), ./scripts/worker.ts (tasks) — see docs/async-tasks.md
     Python:      ./py/ (FastAPI), ./app/lib/py/client.ts (typed RPC) — see docs/python-bridge.md
   </map>
@@ -55,6 +55,25 @@ Other little ideas:
     - **Actions:** Logic lives in `export async function action` co-located with the UI.
     - **Validation:** Validate `request.formData()` with Zod immediately.
     - **Feedback:** Return `data` or `errors` directly to the component.
+  </pattern>
+
+  <pattern name="Forms">
+    - **Schema:** Define in `~/lib/schemas.ts`. One schema validates both client and server.
+    - **Action:** Use `parseForm(schema, formData)` from `~/lib/utils`. Auto-detects array fields from schema.
+    - **Component:** Use `useFormValidation(schema, actionData?.errors)` for optional client-side validation.
+    - **Works without JS:** Server validates via action. Client validation is progressive enhancement.
+    - **Example:**
+      ```tsx
+      // Action
+      const formData = await request.formData();
+      const result = parseForm(mySchema, formData);
+      if (!result.success) return { errors: result.error.flatten().fieldErrors };
+
+      // Component
+      const actionData = useActionData<typeof action>();
+      const { onSubmit, errors } = useFormValidation(mySchema, actionData?.errors);
+      return <Form method="post" onSubmit={onSubmit}>...</Form>
+      ```
   </pattern>
 
   <pattern name="Auth">

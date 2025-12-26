@@ -14,3 +14,6 @@
 - [ ] a very simple prod deployment
 - [ ] Agent knowledge base
 - [ ] Python Service Cataglog. Service catalog? 
+- [ ] JS always optional?
+- [ ] Less tasks for the agent, like auto-fixing stuff
+- [ ] Auto-fixing agent
