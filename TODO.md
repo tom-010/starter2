@@ -5,13 +5,17 @@
 - [ ] testing approach
 - [x] boring forms
 - [x] python services and integration
-- [ ] feedback mechanisms (server logs, tests, browser, antigravity?)
 - [x] Simple Observability. KISS!
 - [x] feature flags
 - [x] settings.py
 - [ ] a very simple prod deployment
 - [ ] JS always optional?
 - [ ] Auto-fixing build agent (sub-agents)
+
+Visibility
+- [ ] feedback mechanisms (server logs, tests, browser, antigravity?)
+- [ ] Antigravity
+- [ ] MCPs
 
 Augmented Agents
 - [ ] Python Service Catalog. Service catalog? 
