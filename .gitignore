@@ -10,3 +10,8 @@
 
 # Dev logs
 dev.log
+
+# Playwright
+playwright/.auth
+test-results/
+playwright-report/
